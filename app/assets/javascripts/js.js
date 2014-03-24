@@ -3,6 +3,9 @@ var
 	Vec = function (x, y) {
 		this.x = x;
 		this.y = y;
+		this.showResults = function () {
+			return "(" + this.x + ", " + this.y + ")";
+		}
 	},
 	//pointer defaults to looking upwards
 	pointer = 1,
@@ -14,16 +17,25 @@ var
 	initalizeAjaxCall = function (callback) {
 		$.ajax({
 			url: "home/getData",
+			async: false,
+			beforeSend: function() {
+				$("body").append("<p>Getting results</p>");
+			},
 			success: function(response) {
 				findPath(response.Directions);
 			},
 			failure: function(response) {
-				console.log(response);
+				$("body").append("<p>There was a problem getting the results</p>");
+			},
+			complete: function () {
+				$("body").append("<p>Data fetch and formatting complete</p>");
+				callback();
 			}
 		});
 	},
 	//does the path 
 	findPath = function (directions) {
+		console.log(directions);
 		for (var i = 0; i < directions.length; i++) {
 			switch (directions[i]) {
 				case "LEFT":
@@ -55,13 +67,23 @@ var
 	},
 
 	goFoward = function () {
+		//Changing the ship to go forward
 		shipPos.x += values[pointer].x;
 		shipPos.y += values[pointer].y;
-		console.log(shipPos);
-	}
+	},
 
 	responseResult = function () {
-
+		//The response and submission to the server
+		$.ajax({
+			url: "home/submitData",
+			data: {"x" : shipPos.x, "y" : shipPos.y},
+			success: function(response) {
+				$("body").append("<p>Final ship position: " + shipPos.showResults() + "</p>");
+			},
+			failure: function(response) {
+				$("body").append("<p>There was an error submitting the results</p>");
+			}
+		});
 	},
 
 	init = function () {
@@ -76,7 +98,9 @@ var
 
 		//initialize
 		initalizeAjaxCall(function () {
+			//callback
 			responseResult();
 		});
 	};
+
 init: init();
