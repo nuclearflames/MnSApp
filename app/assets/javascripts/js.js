@@ -35,7 +35,6 @@ var
 	},
 	//does the path 
 	findPath = function (directions) {
-		console.log(directions);
 		for (var i = 0; i < directions.length; i++) {
 			switch (directions[i]) {
 				case "LEFT":
