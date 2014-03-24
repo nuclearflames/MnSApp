@@ -78,6 +78,7 @@ var
 			data: {"x" : shipPos.x, "y" : shipPos.y},
 			success: function(response) {
 				$("body").append("<p>Final ship position: " + shipPos.showResults() + "</p>");
+				$("body").append("<p>" + response.Message + "</p>");
 			},
 			failure: function(response) {
 				$("body").append("<p>There was an error submitting the results</p>");
